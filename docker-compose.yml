@@ -1,0 +1,41 @@
+services:
+  # Serviço do MongoDB
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb_local
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: training
+    volumes:
+      - mongodb_data:/data/db
+
+  # Serviço do Apache Kafka em modo KRaft (sem ZooKeeper)
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka_local
+    ports:
+      - "9092:9092"
+    environment:
+      # Configurações do modo KRaft
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka_local:29093'
+      KAFKA_LISTENERS: 'PLAINTEXT://kafka_local:29092,CONTROLLER://kafka_local:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka_local:29092,PLAINTEXT_HOST://localhost:9092'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      
+      # Configurações adicionais
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk' # UUID necessário para KRaft inicializar
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+
+volumes:
+  mongodb_data:

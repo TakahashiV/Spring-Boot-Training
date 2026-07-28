@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: training
+
+  # Configurações do MongoDB
+  data:
+    mongodb:
+      uri: mongodb://root:password@localhost:27017/training?authSource=admin
+      auto-index-creation: true
+
+  # Configurações do Apache Kafka
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: training-group
+      properties:
+        spring.json.trusted.packages: "*"

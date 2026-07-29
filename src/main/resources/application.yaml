@@ -5,7 +5,6 @@ spring:
   # Configurações do MongoDB
   data:
     mongodb:
-      uri: mongodb://root:password@localhost:27017/training?authSource=admin
       auto-index-creation: true
 
   # Configurações do Apache Kafka
@@ -20,3 +19,5 @@ spring:
       group-id: training-group
       properties:
         spring.json.trusted.packages: "*"
+  mongodb:
+    uri: mongodb://root:password@localhost:27017/training?authSource=admin

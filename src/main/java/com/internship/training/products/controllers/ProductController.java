@@ -2,7 +2,9 @@ package com.internship.training.products.controllers;
 
 import com.internship.training.products.models.dto.ProductRequestDTO;
 import com.internship.training.products.models.dto.ProductResponseDTO;
+import com.internship.training.products.models.dto.ProductSearchRequest;
 import com.internship.training.products.services.ProductService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,5 +58,12 @@ public class ProductController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    // Buscar Produtos Customizados e Paginados (POST /search)
+    @PostMapping("/search")
+    public ResponseEntity<Page<ProductResponseDTO>> searchProducts(@RequestBody ProductSearchRequest request) {
+        Page<ProductResponseDTO> result = productService.searchProducts(request.criteria(), request.pageRequest());
+        return ResponseEntity.ok(result);
     }
 }

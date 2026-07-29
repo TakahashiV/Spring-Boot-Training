@@ -1,9 +1,13 @@
 package com.internship.training.products.services;
 
+import com.internship.training.products.models.dto.PageRequestDTO;
 import com.internship.training.products.models.dto.ProductRequestDTO;
 import com.internship.training.products.models.dto.ProductResponseDTO;
+import com.internship.training.products.models.dto.ProductSearchCriteriaDTO;
 import com.internship.training.products.models.entities.Product;
 import com.internship.training.products.repositories.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -58,6 +62,17 @@ public class ProductService {
             return true;
         }
         return false;
+    }
+
+    // Busca Customizada e Paginada de Produtos
+    public Page<ProductResponseDTO> searchProducts(ProductSearchCriteriaDTO criteria, PageRequestDTO pageRequest) {
+        Page<Product> productPage = productRepository.findProductsCustom(criteria, pageRequest);
+        
+        List<ProductResponseDTO> dtos = productPage.getContent().stream()
+                .map(this::convertToResponseDTO)
+                .toList();
+                
+        return new PageImpl<>(dtos, productPage.getPageable(), productPage.getTotalElements());
     }
 
     // --- Métodos de Mapeamento (Mappers) ---

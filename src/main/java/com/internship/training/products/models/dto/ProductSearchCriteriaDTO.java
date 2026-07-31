@@ -6,5 +6,6 @@ public record ProductSearchCriteriaDTO(
     String name,
     String description,
     String imageURL,
-    BigDecimal price
+    BigDecimal minPrice,
+    BigDecimal maxPrice
 ) {}

@@ -8,7 +8,9 @@ import com.internship.training.products.models.entities.Product;
 import com.internship.training.products.repositories.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -66,6 +68,7 @@ public class ProductService {
 
     // Busca Customizada e Paginada de Produtos
     public Page<ProductResponseDTO> searchProducts(ProductSearchCriteriaDTO criteria, PageRequestDTO pageRequest) {
+        validatePriceRange(criteria);
         Page<Product> productPage = productRepository.findProductsCustom(criteria, pageRequest);
         
         List<ProductResponseDTO> dtos = productPage.getContent().stream()
@@ -73,6 +76,16 @@ public class ProductService {
                 .toList();
                 
         return new PageImpl<>(dtos, productPage.getPageable(), productPage.getTotalElements());
+    }
+
+    private void validatePriceRange(ProductSearchCriteriaDTO criteria) {
+        if (criteria == null || criteria.minPrice() == null || criteria.maxPrice() == null) {
+            return;
+        }
+
+        if (criteria.minPrice().compareTo(criteria.maxPrice()) > 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "minPrice cannot be greater than maxPrice");
+        }
     }
 
     // --- Métodos de Mapeamento (Mappers) ---

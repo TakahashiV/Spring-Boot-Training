@@ -43,8 +43,12 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
             if (criteria.imageURL() != null && !criteria.imageURL().isBlank()) {
                 criteriaList.add(Criteria.where("imageURL").regex(criteria.imageURL(), "i"));
             }
-            if (criteria.price() != null) {
-                criteriaList.add(Criteria.where("price").is(criteria.price()));
+            if (criteria.minPrice() != null && criteria.maxPrice() != null) {
+                criteriaList.add(Criteria.where("price").gte(criteria.minPrice()).lte(criteria.maxPrice()));
+            } else if (criteria.minPrice() != null) {
+                criteriaList.add(Criteria.where("price").gte(criteria.minPrice()));
+            } else if (criteria.maxPrice() != null) {
+                criteriaList.add(Criteria.where("price").lte(criteria.maxPrice()));
             }
         }
 
